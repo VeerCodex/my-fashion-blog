@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NOIR — Fashion Blog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #0a0a0a;
+      --dark: #111111;
+      --card: #161616;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --white: #f0ece4;
+      --muted: #7a7a7a;
+      --border: #222222;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 4rem;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 3rem 6rem 4rem;
+      z-index: 1;
+    }
+
+    .hero-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 1.05;
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.8;
+      max-width: 420px;
+      margin-bottom: 3rem;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.3s;
+      width: fit-content;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-100%);
+      transition: transform 0.3s;
+      z-index: -1;
+    }
+
+    .btn-primary:hover { color: var(--black); }
+    .btn-primary:hover::before { transform: translateX(0); }
+
+    .hero-image {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-image-inner {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1208 0%, #0d0d0d 40%, #1a1410 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 12rem;
+      color: rgba(201,168,76,0.08);
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      user-select: none;
+    }
+
+    .hero-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, var(--black) 0%, transparent 30%);
+    }
+
+    /* MARQUEE */
+    .marquee-wrap {
+      background: var(--gold);
+      padding: 0.9rem 0;
+      overflow: hidden;
+    }
+
+    .marquee {
+      display: flex;
+      gap: 3rem;
+      animation: marquee 18s linear infinite;
+      white-space: nowrap;
+    }
+
+    .marquee span {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--black);
+      font-weight: 500;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* FEATURED POST */
+    .section { padding: 6rem 4rem; }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .featured {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 2px;
+      margin-bottom: 2px;
+    }
+
+    .card {
+      background: var(--card);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+
+    .card:hover { border-color: var(--gold); }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 3rem;
+      color: rgba(201,168,76,0.15);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-img-big { aspect-ratio: 3/2; font-size: 5rem; }
+
+    .card-img-1 { background: linear-gradient(135deg, #0f0a0a 0%, #1a0f0f 100%); }
+    .card-img-2 { background: linear-gradient(135deg, #080d10 0%, #0d1520 100%); }
+    .card-img-3 { background: linear-gradient(135deg, #0a0f08 0%, #101a0d 100%); }
+    .card-img-4 { background: linear-gradient(135deg, #100a14 0%, #1a0f1e 100%); }
+    .card-img-5 { background: linear-gradient(135deg, #0f0f0a 0%, #1a1a0d 100%); }
+
+    .card-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(10,10,10,0.9) 0%, transparent 60%);
+    }
+
+    .card-body {
+      padding: 1.8rem;
+    }
+
+    .card-cat {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 0.8rem;
+      transition: color 0.3s;
+    }
+
+    .card:hover h2 { color: var(--gold); }
+
+    .card-big h2 { font-size: 2.2rem; }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-meta {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .card-meta span { color: var(--gold); }
+
+    /* GRID */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    /* QUOTE SECTION */
+    .quote-section {
+      padding: 8rem 4rem;
+      text-align: center;
+      position: relative;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: radial-gradient(ellipse at center, rgba(201,168,76,0.04) 0%, transparent 70%);
+    }
+
+    .quote-section blockquote {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      line-height: 1.4;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      color: var(--white);
+    }
+
+    .quote-author {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* NEWSLETTER */
+    .newsletter {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      margin: 0 4rem 6rem;
+    }
+
+    .newsletter h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .newsletter h3 em { font-style: italic; color: var(--gold); }
+
+    .newsletter p { color: var(--muted); margin-top: 1rem; line-height: 1.7; }
+
+    .input-row {
+      display: flex;
+      gap: 0;
+    }
+
+    .input-row input {
+      flex: 1;
+      background: var(--black);
+      border: 1px solid var(--border);
+      border-right: none;
+      color: var(--white);
+      padding: 1rem 1.5rem;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .input-row input:focus { border-color: var(--gold); }
+    .input-row input::placeholder { color: var(--muted); }
+
+    .input-row button {
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      padding: 1rem 2rem;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .input-row button:hover { background: var(--gold-light); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-copy {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-text > * {
+      animation: fadeUp 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    .hero-tag { animation-delay: 0.1s; }
+    .hero h1 { animation-delay: 0.2s; }
+    .hero-sub { animation-delay: 0.35s; }
+    .btn-primary { animation-delay: 0.5s; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-image { height: 40vh; }
+      .hero-text { padding: 4rem 1.5rem; }
+      .section { padding: 4rem 1.5rem; }
+      .featured { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .newsletter { grid-template-columns: 1fr; margin: 0 1.5rem 4rem; padding: 2.5rem; }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">NOIR</a>
+  <ul class="nav-links">
+    <li><a href="#">Trends</a></li>
+    <li><a href="#">Style</a></li>
+    <li><a href="#">Beauty</a></li>
+    <li><a href="#">Culture</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-tag">Spring / Summer 2026</div>
+    <h1>Where <em>Style</em><br>Meets the<br>Night.</h1>
+    <p class="hero-sub">A curated fashion blog exploring the intersection of dark aesthetics, contemporary trends, and unapologetic personal style.</p>
+    <a href="#posts" class="btn-primary">Explore Posts</a>
+  </div>
+  <div class="hero-image">
+    <div class="hero-image-inner">✦</div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span>SS26 Trends</span><span>✦</span>
+    <span>Dark Aesthetics</span><span>✦</span>
+    <span>Luxury Editorial</span><span>✦</span>
+    <span>Style Diaries</span><span>✦</span>
+    <span>Wardrobe Essentials</span><span>✦</span>
+    <span>SS26 Trends</span><span>✦</span>
+    <span>Dark Aesthetics</span><span>✦</span>
+    <span>Luxury Editorial</span><span>✦</span>
+    <span>Style Diaries</span><span>✦</span>
+    <span>Wardrobe Essentials</span><span>✦</span>
+  </div>
+</div>
+
+<!-- FEATURED POSTS -->
+<section class="section" id="posts">
+  <div class="section-label">Featured Stories</div>
+
+  <div class="featured">
+    <div class="card card-big">
+      <div class="card-img card-img-big card-img-1">✦</div>
+      <div class="card-body">
+        <div class="card-cat">Trends</div>
+        <h2>The Return of Quiet Luxury: Why Less is More in 2026</h2>
+        <p>Forget logos. This season is all about impeccable tailoring, neutral palettes, and the kind of confidence that needs no label to speak for itself.</p>
+        <div class="card-meta"><span>March 20, 2026</span> · 6 min read</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:2px;">
+      <div class="card">
+        <div class="card-img card-img-2">✦</div>
+        <div class="card-body">
+          <div class="card-cat">Style</div>
+          <h2>All-Black Everything: The Art of Monochrome Dressing</h2>
+          <p>A complete guide to wearing black from head to toe without looking flat.</p>
+          <div class="card-meta"><span>March 15, 2026</span> · 4 min read</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-img card-img-3">✦</div>
+        <div class="card-body">
+          <div class="card-cat">Beauty</div>
+          <h2>Dark Lips, Bold Eyes: The Evening Beauty Edit</h2>
+          <p>The season's most powerful makeup looks decoded, step by step.</p>
+          <div class="card-meta"><span>March 10, 2026</span> · 3 min read</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-section">
+  <blockquote>"Fashion is not something that exists in dresses only. Fashion is in the sky, in the street — fashion has to do with ideas."</blockquote>
+  <div class="quote-author">— Coco Chanel</div>
+</div>
+
+<!-- LATEST POSTS -->
+<section class="section">
+  <div class="section-label">Latest Posts</div>
+  <div class="grid-3">
+
+    <div class="card">
+      <div class="card-img card-img-4">✦</div>
+      <div class="card-body">
+        <div class="card-cat">Culture</div>
+        <h2>Street Style Diaries: Tokyo's Underground Fashion Scene</h2>
+        <p>Where rebellion and refinement collide in the world's most stylish city.</p>
+        <div class="card-meta"><span>March 8, 2026</span> · 5 min read</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img card-img-5">✦</div>
+      <div class="card-body">
+        <div class="card-cat">Wardrobe</div>
+        <h2>10 Timeless Pieces Every Dark Aesthetic Wardrobe Needs</h2>
+        <p>Build a capsule wardrobe that outlasts every trend cycle.</p>
+        <div class="card-meta"><span>March 3, 2026</span> · 7 min read</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img card-img-1">✦</div>
+      <div class="card-body">
+        <div class="card-cat">Editorial</div>
+        <h2>Velvet Season: How to Style the Fabric of Royalty</h2>
+        <p>Velvet is back — and this time it demands to be taken seriously.</p>
+        <div class="card-meta"><span>Feb 27, 2026</span> · 4 min read</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<div class="newsletter">
+  <div>
+    <h3>Stay in the <em>Dark.</em></h3>
+    <p>New posts, trend alerts, and style notes — delivered straight to your inbox. No noise, only noir.</p>
+  </div>
+  <div>
+    <div class="input-row">
+      <input type="email" placeholder="your@email.com" />
+      <button>Subscribe</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">NOIR</div>
+  <ul class="footer-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Posts</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 NOIR Blog. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
